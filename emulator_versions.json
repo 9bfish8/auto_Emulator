@@ -1,0 +1,22 @@
+{
+  "NoxPlayer": {
+    "name": "NoxPlayer",
+    "version": "7.0.6.2"
+  },
+  "MEmu": {
+    "name": "MEmu",
+    "version": "9.3.1"
+  },
+  "LDPlayer9": {
+    "name": "LDPlayer9",
+    "version": "9.1.85.0"
+  },
+  "BlueStacks5": {
+    "name": "BlueStacks5",
+    "version": "5.22.153.1026"
+  },
+  "MuMuPlayer": {
+    "name": "MuMuPlayer",
+    "version": "5.13.1"
+  }
+}
