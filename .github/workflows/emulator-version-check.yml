@@ -1,11 +1,12 @@
-# .github/workflows/emulator-version-check.yml
 name: 에뮬레이터 버전 체크
 
 on:
   schedule:
-    # 평일 아침 8:40 KST (UTC 23:40 전날)
-    - cron: '40 23 * * 0-4'  # 일~목 23:40 UTC = 월~금 08:40 KST
-  workflow_dispatch:  # 수동 실행용
+    - cron: '40 23 * * 0-4'  # 평일 08:40 KST
+  workflow_dispatch:
+  push:
+    branches:
+      - dev  # dev 브랜치 푸시할 때도 테스트 실행
 
 jobs:
   check-versions:
@@ -22,7 +23,7 @@ jobs:
 
       - name: 의존성 설치
         run: |
-          pip install requests urllib3
+          pip install -r requirements.txt
 
       - name: 버전 체크 실행
         env:
