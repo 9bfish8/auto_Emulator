@@ -10,7 +10,10 @@ import requests
 import re
 import json
 import urllib3
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+# KST 타임존 (UTC+9)
+KST = timezone(timedelta(hours=9))
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -253,7 +256,7 @@ def send_teams_notification(current_versions, my_versions):
         "sections": [
             {
                 "activityTitle": "📊 에뮬레이터 버전 현황",
-                "activitySubtitle": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "activitySubtitle": datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S") + " KST",
                 "markdown": True
             },
             {
@@ -281,7 +284,7 @@ def send_teams_notification(current_versions, my_versions):
 
 def main():
     print(f"\n{'='*60}")
-    print(f"에뮬레이터 버전 체크 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"에뮬레이터 버전 체크 - {datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S')} KST")
     print(f"{'='*60}\n")
 
     # 내가 관리하는 버전 로드
