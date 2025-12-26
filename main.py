@@ -5,12 +5,17 @@ JSON(내가 관리하는 버전)과 최신 버전 비교해서 Teams로 표 형�
 ※ JSON은 자동 저장 안 함 - 직접 수정해서 관리
 """
 
+import os
 import requests
 import re
 import json
 import urllib3
 from datetime import datetime
 from pathlib import Path
+from dotenv import load_dotenv
+
+# .env 파일 로드 (있으면)
+load_dotenv()
 
 # SSL 경고 무시 (LDPlayer API용)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -18,7 +23,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # ============================================================
 # 설정
 # ============================================================
-TEAMS_WEBHOOK_URL = ""
+TEAMS_WEBHOOK_URL = os.environ.get('TEAMS_WEBHOOK_URL', '')
 VERSION_FILE = Path(__file__).parent / "emulator_versions.json"
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -184,8 +189,8 @@ def load_my_versions():
 
 def send_teams_notification(current_versions, my_versions):
     """Teams로 내 버전 + 최신 버전 표 전송"""
-    if TEAMS_WEBHOOK_URL == "YOUR_TEAMS_WEBHOOK_URL_HERE":
-        print("⚠️  Teams Webhook URL이 설정되지 않았습니다.")
+    if not TEAMS_WEBHOOK_URL:
+        print("⚠️  TEAMS_WEBHOOK_URL 환경변수가 설정되지 않았습니다.")
         return False
 
     # 표 형식 마크다운 생성

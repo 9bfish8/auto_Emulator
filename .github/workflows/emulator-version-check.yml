@@ -1,0 +1,31 @@
+# .github/workflows/emulator-version-check.yml
+name: 에뮬레이터 버전 체크
+
+on:
+  schedule:
+    # 평일 아침 8:40 KST (UTC 23:40 전날)
+    - cron: '40 23 * * 0-4'  # 일~목 23:40 UTC = 월~금 08:40 KST
+  workflow_dispatch:  # 수동 실행용
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 의존성 설치
+        run: |
+          pip install requests urllib3
+
+      - name: 버전 체크 실행
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        run: |
+          python emulator_version_check.py
