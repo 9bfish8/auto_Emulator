@@ -8,17 +8,14 @@ JSON(내가 관리하는 버전)과 최신 버전 비교해서 Teams로 표 형�
 import requests
 import re
 import json
-import urllib3
 from datetime import datetime
 from pathlib import Path
-
-# SSL 경고 무시 (LDPlayer API용)
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ============================================================
 # 설정
 # ============================================================
 TEAMS_WEBHOOK_URL = ""
+
 VERSION_FILE = Path(__file__).parent / "emulator_versions.json"
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -29,17 +26,15 @@ HEADERS = {
 # ============================================================
 
 def get_nox_version():
-    """NoxPlayer - 공식 다운로드 API (redirect에서 버전 추출)"""
+    """NoxPlayer - 한국 공식 사이트"""
     try:
-        url = "https://kr.bignox.com/kr/download/fullPackage"
-        resp = requests.get(url, headers=HEADERS, timeout=10, allow_redirects=False)
+        url = "https://kr.bignox.com/"
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp.raise_for_status()
 
-        if resp.status_code == 302:
-            location = resp.headers.get('Location', '')
-            # URL에서 버전 추출: nox_setup_v7.0.6.2_full_intl.exe
-            match = re.search(r'v([\d.]+)_', location)
-            if match:
-                return {"name": "NoxPlayer", "version": match.group(1)}
+        match = re.search(r'([\d.]+)버전', resp.text)
+        if match:
+            return {"name": "NoxPlayer", "version": match.group(1)}
     except Exception as e:
         return {"name": "NoxPlayer", "error": str(e)}
     return {"name": "NoxPlayer", "error": "Version not found"}
@@ -61,80 +56,45 @@ def get_memu_version():
 
 
 def get_ldplayer_version():
-    """LDPlayer9 - 공식 API"""
+    """LDPlayer - 릴리즈 노트"""
     try:
-        url = "https://apikr2.ldmnq.com/checkMnqVersion"
-        params = {
-            "pid": "dnplayer-kr9",
-            "openid": "172",
-            "t": "20251219112033",
-            "sv": "0900010000",  # 낮은 버전으로 고정
-            "n": "7a12ef8a4b748c85d9c7151d76942bd4",
-            "updatetype": "0"
-        }
-        headers = {'User-Agent': 'LDPlayer'}
+        url = "https://www.ldplayer.net/other/version-history-and-release-notes.html"
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp.raise_for_status()
 
-        resp = requests.get(url, params=params, headers=headers, timeout=10, verify=False)
-
-        if resp.status_code == 200 and resp.text:
-            # URL에서 버전 추출: LDPlayer_9.1.85.0.exe
-            url_match = re.search(r'LDPlayer_([\d.]+)\.exe', resp.text)
-            if url_match:
-                return {"name": "LDPlayer9", "version": url_match.group(1)}
-
+        match = re.search(r'Version:\s*([\d.]+)', resp.text)
+        if match:
+            return {"name": "LDPlayer9", "version": match.group(1)}
     except Exception as e:
         return {"name": "LDPlayer9", "error": str(e)}
     return {"name": "LDPlayer9", "error": "Version not found"}
 
 
 def get_bluestacks_version():
-    """BlueStacks5 - 공식 다운로드 API (redirect에서 버전 추출)"""
+    """BlueStacks5 - MajorGeeks"""
     try:
-        url = "https://cloud.bluestacks.com/api/getdownloadnow"
-        params = {
-            "platform": "win",
-            "oem": "BlueStacks",
-            "bluestacks_version": "bs5"
-        }
-        resp = requests.get(url, params=params, headers=HEADERS, timeout=10, allow_redirects=False)
+        url = "https://www.majorgeeks.com/files/details/bluestacks.html"
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp.raise_for_status()
 
-        if resp.status_code == 302:
-            location = resp.headers.get('Location', '')
-            # URL에서 버전 추출: BlueStacksMicroInstaller_5.22.153.1026_native.exe
-            match = re.search(r'(\d+\.\d+\.\d+\.\d+)', location)
-            if match:
-                return {"name": "BlueStacks5", "version": match.group(1)}
+        match = re.search(r'(5\.\d+\.\d+\.\d+)', resp.text)
+        if match:
+            return {"name": "BlueStacks5", "version": match.group(1)}
     except Exception as e:
         return {"name": "BlueStacks5", "error": str(e)}
     return {"name": "BlueStacks5", "error": "Version not found"}
 
 
 def get_mumu_version():
-    """MuMu Player - 공식 API"""
+    """MuMu Player - 릴리즈 노트"""
     try:
-        url = "https://api.mumuglobal.com/api/appcast"
-        params = {
-            "version": "3.8.18.2845",
-            "engine": "NEMUX",
-            "uuid": "version-check",
-            "usage": "1",
-            "package": "mumu",
-            "channel": "gw-overseas",
-            "architecture": "x86_64",
-            "language": "ko",
-            "country": "ko-KR"
-        }
-        resp = requests.get(url, params=params, timeout=15)
+        url = "https://www.mumuplayer.com/update/"
+        resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
 
-        data = resp.json()
-        if data.get("items"):
-            version = data["items"][0].get("version", "")
-            # 5.13.1.2475 -> 5.13.1 형식으로 변환
-            parts = version.split(".")
-            if len(parts) >= 3:
-                version = ".".join(parts[:3])
-            return {"name": "MuMuPlayer", "version": version}
+        match = re.search(r'MuMuPlayer\s*\(Windows\)\s*V([\d.]+)', resp.text)
+        if match:
+            return {"name": "MuMuPlayer", "version": match.group(1)}
     except Exception as e:
         return {"name": "MuMuPlayer", "error": str(e)}
     return {"name": "MuMuPlayer", "error": "Version not found"}
