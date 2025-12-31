@@ -1,12 +1,19 @@
-백업용
+### NoxPlayer
+- 버전: `https://kr.bignox.com/kr/download/fullPackage` 리다이렉트 URL에서 추출
+- 날짜: 리다이렉트 URL 경로 `/full/20250317/`에서 추출
 
-~~추가할 기능 : 에뮬레이터 다운그레이드시 알림~~
+### MEmu
+- 버전: `https://www.memuplay.com/blog/category/release-notes`에서 "MEmu X.X.X is officially released" 패턴 추출
+- 날짜: 같은 페이지에서 "December 8, 2025" 형식 추출
 
-<img width="759" height="343" alt="image" src="https://github.com/user-attachments/assets/6f7d6007-5c71-43d6-a141-f9ba3bbbff07" />
-<img width="789" height="362" alt="image" src="https://github.com/user-attachments/assets/41e897f6-95ed-4843-b63a-a7c53687ff75" />
+### LDPlayer9
+- 버전: `https://apikr2.ldmnq.com/checkMnqVersion` API 응답에서 추출
+- 날짜: `https://kr.ldplayer.net/other/version-history-and-release-notes.html`에서 추출 (403 차단 시 표시 안됨)
 
+### BlueStacks5
+- 버전: `https://cloud.bluestacks.com/api/getdownloadnow` 리다이렉트 URL에서 추출
+- 날짜: `https://support.bluestacks.com/api/v2/help_center/articles/360056960211.json` Zendesk API에서 추출
 
-- 테스트 채널에서 다운그레이드 테스트 완료
-<img width="778" height="361" alt="image" src="https://github.com/user-attachments/assets/eb79ab63-489b-412c-9c27-cc59b8c811d9" />
-
-
+### MuMuPlayer
+- 버전: `https://api.mumuglobal.com/api/appcast` API 응답에서 추출
+- 날짜: 같은 API 응답의 releaseNoteList에서 "(20251212)" 형식 추출
