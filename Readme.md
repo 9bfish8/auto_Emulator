@@ -1,12 +1,19 @@
-백업용
+### NoxPlayer
+- URL: `https://kr.bignox.com/`
+- 방식: 메인 페이지에서 "X.X.X버전" 패턴 추출
 
-~~추가할 기능 : 에뮬레이터 다운그레이드시 알림~~
+### MEmu
+- URL: `https://www.memuplay.com/blog/category/release-notes`
+- 방식: 릴리즈 노트 페이지에서 "MEmu X.X.X is officially released" 패턴 추출
 
-<img width="759" height="343" alt="image" src="https://github.com/user-attachments/assets/6f7d6007-5c71-43d6-a141-f9ba3bbbff07" />
-<img width="789" height="362" alt="image" src="https://github.com/user-attachments/assets/41e897f6-95ed-4843-b63a-a7c53687ff75" />
+### LDPlayer9
+- URL: `https://www.ldplayer.net/other/version-history-and-release-notes.html`
+- 방식: 버전 히스토리 페이지에서 "Version: X.X.X.X" 패턴 추출
 
+### BlueStacks5
+- URL: `https://www.majorgeeks.com/files/details/bluestacks.html`
+- 방식: MajorGeeks 페이지에서 "5.X.X.X" 패턴 추출
 
-- 테스트 채널에서 다운그레이드 테스트 완료
-<img width="778" height="361" alt="image" src="https://github.com/user-attachments/assets/eb79ab63-489b-412c-9c27-cc59b8c811d9" />
-
-
+### MuMuPlayer
+- URL: `https://www.mumuplayer.com/update/`
+- 방식: 업데이트 페이지에서 "MuMuPlayer (Windows) VX.X.X" 패턴 추출
