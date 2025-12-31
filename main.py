@@ -18,7 +18,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # ============================================================
 # 설정
 # ============================================================
-TEAMS_WEBHOOK_URL = "https://incainternet.webhook.office.com/webhookb2/091dfde3-2233-4071-8b6c-7dce6ce59fd2@d4f5a137-8ff6-4d31-b326-c33840aeefdc/IncomingWebhook/8456e2b9228040cf8768b35235e89b9d/0ed10ecd-9ad2-4fbc-9645-d7cddffa3599/V2bD_HGcTE3acCmQchUHsHrA4OM47svoPooJ5HqAtl_uU1"
+TEAMS_WEBHOOK_URL = ""
 VERSION_FILE = Path(__file__).parent / "emulator_versions.json"
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
