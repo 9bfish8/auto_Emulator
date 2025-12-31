@@ -8,8 +8,12 @@ JSON(내가 관리하는 버전)과 최신 버전 비교해서 Teams로 표 형�
 import requests
 import re
 import json
+import urllib3
 from datetime import datetime
 from pathlib import Path
+
+# SSL 경고 무시 (LDPlayer API용)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ============================================================
 # 설정
@@ -56,15 +60,26 @@ def get_memu_version():
 
 
 def get_ldplayer_version():
-    """LDPlayer - 릴리즈 노트"""
+    """LDPlayer9 - 공식 API"""
     try:
-        url = "https://www.ldplayer.net/other/version-history-and-release-notes.html"
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
+        url = "https://apikr2.ldmnq.com/checkMnqVersion"
+        params = {
+            "pid": "dnplayer-kr9",
+            "openid": "172",
+            "t": "20251219112033",
+            "sv": "0900010000",
+            "n": "7a12ef8a4b748c85d9c7151d76942bd4",
+            "updatetype": "0"
+        }
+        api_headers = {'User-Agent': 'LDPlayer'}
 
-        match = re.search(r'Version:\s*([\d.]+)', resp.text)
-        if match:
-            return {"name": "LDPlayer9", "version": match.group(1)}
+        resp = requests.get(url, params=params, headers=api_headers, timeout=10, verify=False)
+
+        if resp.status_code == 200 and resp.text:
+            url_match = re.search(r'LDPlayer_([\d.]+)\.exe', resp.text)
+            if url_match:
+                return {"name": "LDPlayer9", "version": url_match.group(1)}
+
     except Exception as e:
         return {"name": "LDPlayer9", "error": str(e)}
     return {"name": "LDPlayer9", "error": "Version not found"}
@@ -85,18 +100,67 @@ def get_bluestacks_version():
     return {"name": "BlueStacks5", "error": "Version not found"}
 
 
+def parse_version(version_str):
+    """버전 문자열을 비교 가능한 튜플로 변환"""
+    try:
+        return tuple(int(x) for x in version_str.split('.'))
+    except:
+        return (0,)
+
+
 def get_mumu_version():
-    """MuMu Player - 릴리즈 노트"""
+    """MuMu Player - 웹페이지 + API 비교해서 최신 버전 사용"""
+    web_version = None
+    api_version = None
+
+    # 1. 웹페이지에서 버전
     try:
         url = "https://www.mumuplayer.com/update/"
         resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
+        if resp.status_code == 200:
+            match = re.search(r'MuMuPlayer\s*\(Windows\)\s*V([\d.]+)', resp.text)
+            if match:
+                web_version = match.group(1)
+    except:
+        pass
 
-        match = re.search(r'MuMuPlayer\s*\(Windows\)\s*V([\d.]+)', resp.text)
-        if match:
-            return {"name": "MuMuPlayer", "version": match.group(1)}
-    except Exception as e:
-        return {"name": "MuMuPlayer", "error": str(e)}
+    # 2. API에서 버전
+    try:
+        url = "https://api.mumuglobal.com/api/appcast"
+        params = {
+            "version": "3.8.18.2845",
+            "engine": "NEMUX",
+            "uuid": "version-check",
+            "usage": "1",
+            "package": "mumu",
+            "channel": "gw-overseas",
+            "architecture": "x86_64",
+            "language": "ko",
+            "country": "ko-KR"
+        }
+        resp = requests.get(url, params=params, timeout=15)
+        data = resp.json()
+
+        if data.get("items"):
+            item = data["items"][0]
+            version = item.get("version", "")
+            parts = version.split(".")
+            if len(parts) >= 3:
+                api_version = ".".join(parts[:3])
+    except:
+        pass
+
+    # 3. 더 높은 버전 선택
+    if web_version and api_version:
+        if parse_version(web_version) >= parse_version(api_version):
+            return {"name": "MuMuPlayer", "version": web_version}
+        else:
+            return {"name": "MuMuPlayer", "version": api_version}
+    elif web_version:
+        return {"name": "MuMuPlayer", "version": web_version}
+    elif api_version:
+        return {"name": "MuMuPlayer", "version": api_version}
+
     return {"name": "MuMuPlayer", "error": "Version not found"}
 
 
