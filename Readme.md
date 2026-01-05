@@ -1,3 +1,6 @@
+<img width="730" height="353" alt="image" src="https://github.com/user-attachments/assets/27eb8f04-c5e7-4a1b-ae8b-1bac6da56039" />
+
+
 ### NoxPlayer
 - URL: `https://kr.bignox.com/`
 - 방식: 웹페이지에서 "X.X.X버전" 패턴 추출
